@@ -43,6 +43,11 @@ class TorKumHansar:
         elif signal == 'X':
             print("Stop")
             quit()
+
+        else:
+            print(f'Invalid command: {command}')
+            quit()
+
     
     def reset_word_pool(self):
         self.word_list = []
