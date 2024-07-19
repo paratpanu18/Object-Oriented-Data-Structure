@@ -14,7 +14,6 @@ class Queue:
     def size(self):
         return len(self.items)
     
-
     def __getitem__(self, i:int):
         return self.items[i]
 
