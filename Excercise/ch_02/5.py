@@ -1,11 +1,9 @@
 def bon(w):
     ans = 0
     previous = None
-    repeated_char = None
 
     for c in w:
         if c == previous:
-            repeated_char = c
             break
         
         previous = c

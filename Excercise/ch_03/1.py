@@ -21,37 +21,37 @@ class App:
     def __init__(self, command: list):
         self.commands_list: list = command
         self.stack = ArrayStack()
+        self.answer = []
     
     def perform_operation(self, command: str):
-        signal = command[0]
-        data = command[2::]
-
-        if signal == 'A':
+        if command.startswith('A'):
+            _ , data = command.split()
             self.stack.push(data)
-            print(f'Add = {data} and Size = {self.stack.size()}')
-        elif signal == 'P' and not self.stack.isEmpty():            
-            popped_index = self.stack.size() - 1
-            print(f'Pop = {self.stack.pop()} and Index = {popped_index}')
+            self.answer.append(f'Add = {data} and Size = {self.stack.size()}')
+
+        elif command.startswith('P') and not self.stack.isEmpty():            
+            self.answer.append(f'Pop = {self.stack.pop()} and Index = {self.stack.size()}')
         
         else:
-            print("-1")
+            self.answer.append("-1")
             
     def start(self):
         for command in self.commands_list:
             self.perform_operation(command)
 
         if self.stack.isEmpty():
-            print("Value in Stack = Empty")
-            exit()
+            self.answer.append("Value in Stack = Empty")
+            return "\n".join(self.answer)
 
         remaining = "Value in Stack = "
         for value in self.stack.data:
             remaining += f'{value} '
         
-        print(remaining)
+        self.answer.append(remaining)
+        return "\n".join(self.answer)
         
     
 raw = [str(cmd) for cmd in input("Enter Input : ").split(',')]
 app = App(raw)
-app.start()
+print(app.start())
 

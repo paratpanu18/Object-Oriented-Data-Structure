@@ -18,35 +18,34 @@ class ArrayStack:
         return len(self.data) == 0
 
 class App:
+    class Dish:
+        def __init__(self, weight: int, frequency: int):
+            self.weight: int = weight
+            self.frequency: int = frequency
+
     def __init__(self, command: list):
         self.commands_list: list = command
         self.stack = ArrayStack()
+        self.answer = []
     
     def perform_operation(self, command: str):
-        new_weight = int(command.split()[0])
-        new_frequency = int(command.split()[1])
-        new_plate = {"weight": new_weight,
-                    "frequency": new_frequency}
-        
-        # print(new_plate)
-        
-        if self.stack.isEmpty():
-            
+        weight, frequency = [int(number) for number in command.split()]
+        new_plate = self.Dish(weight, frequency)
+
+        if self.stack.isEmpty() or new_plate.weight <= self.stack.top().weight:
             self.stack.push(new_plate)
+            return 
         
-        elif new_weight <= self.stack.top()["weight"]:
-            self.stack.push(new_plate)
-        
-        else:
-            # print(self.stack.data)
-            while not self.stack.isEmpty() and new_weight >= self.stack.top()["weight"]:
-                print(self.stack.pop()["frequency"])
-            self.stack.push(new_plate)
+        while not self.stack.isEmpty() and new_plate.weight >= self.stack.top().weight:
+            self.answer.append(str(self.stack.pop().frequency))
+        self.stack.push(new_plate)
 
     def start(self):
         for command in self.commands_list:
             self.perform_operation(command)
+        
+        return "\n".join(self.answer)
 
 raw = [str(cmd) for cmd in input("Enter Input : ").split(',')]
 app = App(raw)
-app.start()
+print(app.start())

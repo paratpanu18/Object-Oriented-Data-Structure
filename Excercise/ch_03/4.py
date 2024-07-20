@@ -16,47 +16,30 @@ class ArrayStack:
     
     def isEmpty(self):
         return len(self.data) == 0
-    
-    def clear(self):
-        self.data = []
 
 class App:
-    def __init__(self, command: list):
-        self.commands_list: list = command
-        self.stack = ArrayStack()
-    
-    def perform_operation(self, command: str):
-        signal = command[0]
-        height = command[2::]
+    def __init__(self, commands_list: list) -> None:
+        self.tree_stack: ArrayStack = ArrayStack()
+        self.commands_list: list = commands_list
+        self.answer: list = []
 
-        if signal == 'A':
-            self.stack.push(height)
-        
-        if signal == 'B':
-            visible_tree = []
-            current_stack: list = self.stack.data.copy()
-            lst_len = len(current_stack)
-
-            for _ in range(lst_len):
-                nearest_tree = current_stack.pop()
-                # print(f'Nearest: {nearest_tree} / Visible {visible_tree} / Current {current_stack}')
-                if not visible_tree: 
-                    visible_tree.append(int(nearest_tree))
-
-                elif int(nearest_tree) > int(visible_tree[-1]):
-                    visible_tree.append(int(nearest_tree))
-
-                elif int(nearest_tree) < int(visible_tree[-1]):
-                    continue
-            
-            print(len(visible_tree))
-            
-    def start(self):
+    def start(self) -> str:
         for command in self.commands_list:
             self.perform_operation(command)
-        
+        return "\n".join(self.answer)
     
+    def perform_operation(self, command: str):
+        if command.startswith('A'):
+            height = int(command.split()[1])
+
+            while not self.tree_stack.isEmpty() and height >= self.tree_stack.top():
+                self.tree_stack.pop()
+
+            self.tree_stack.push(height)
+            
+        elif command.startswith('B'):
+            self.answer.append(str(self.tree_stack.size()))
+
 raw = [str(cmd) for cmd in input("Enter Input : ").split(',')]
 app = App(raw)
-app.start()
-
+print(app.start())
