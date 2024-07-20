@@ -17,56 +17,50 @@ class ArrayStack:
     def isEmpty(self):
         return len(self.data) == 0
 
-def sign_piority(self, sign):
-    if sign in '+-':
-        return 1
-    elif sign in '*/':
-        return 2
-    elif sign == '^':
-        return 3
+class InfixToPostfixConvertor:
 
-def isOperand(c):
-    return c.isalpha()
+    SIGN_PRIORITY = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '/': 2,
+        '^': 3
+    }
 
-def isLeftParenthesis(c):
-    return c == '('
+    def __init__(self, infix: str) -> None:
+        self.infix: str = infix
+        self.stack: ArrayStack = ArrayStack()
+        self.postfix: list = []
 
-def isRightParenthesis(c):
-    return c == ')'
+    def run(self):
+        return self.convert_to_postfix()
+    
+    def convert_to_postfix(self) -> str:
+        infix = self.infix
+        for c in infix:
+            if c.isalpha():
+                self.postfix.append(c)
+            
+            elif c == '(':
+                self.stack.push(c)
 
-def hasLessOrEqualPriority(x, y):
-    precedence = {'+':1, '-':1, '*':2, '/':2, '%':2, '^':3}
-    if y == '(':
-        return False
-    a = precedence[x]
-    b = precedence[y] 
-    if a  <= b:
-        return True
-    else:
-        return False
-
-def toPostfix(infix):
-    stack = ArrayStack()
-    postfix = ''
-
-    for c in infix:
-        if isOperand(c):
-            postfix += c
-        else:
-            if isLeftParenthesis(c):
-                stack.push(c)
-            elif isRightParenthesis(c):
-                operator = stack.pop()
-                while not isLeftParenthesis(operator):
-                    postfix += operator
-                    operator = stack.pop()              
+            elif c == ')':
+                while not self.stack.isEmpty() and self.stack.top() != '(':
+                    self.postfix.append(self.stack.pop())
+                self.stack.pop()        # Pop '('
+            
             else:
-                while (not stack.isEmpty()) and hasLessOrEqualPriority(c,stack.top()):
-                    postfix += stack.pop()
-                stack.push(c)
+                while not self.stack.isEmpty() and \
+                    self.stack.top() != '(' and \
+                    InfixToPostfixConvertor.SIGN_PRIORITY[c] <= InfixToPostfixConvertor.SIGN_PRIORITY[self.stack.top()]:
 
-    while (not stack.isEmpty()):
-        postfix += stack.pop()
-    return postfix
+                    self.postfix.append(self.stack.pop())
+                self.stack.push(c)
+                
+        while not self.stack.isEmpty():
+            self.postfix.append(self.stack.pop())
+        
+        return "".join(self.postfix)
 
-print(f'Postfix : {toPostfix(input("Enter Infix : "))}')
+app = InfixToPostfixConvertor(input())
+print(app.run())
