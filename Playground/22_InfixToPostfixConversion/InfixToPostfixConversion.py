@@ -1,45 +1,35 @@
-class ArrayStack:
-    def __init__(self):
-        self.data = []
+def infix_to_postfix(infix: str) -> str:
+    PRIORITY = {
+        '+': 1,
+        '-': 1,
+        '*': 2,
+        '/': 2,
+        '^': 3
+    }
 
-    def push(self, obj):
-        self.data.append(obj)
-
-    def pop(self):
-        return self.data.pop() if not self.is_empty() else None
-    
-    def is_empty(self):
-        return len(self.data) == 0
-    
-    def size(self):
-        return len(self.data)
-    
-    def peak(self):
-        return self.data[-1]
-
-
-
-def infix_to_postfix_convert(infix: str) -> str:
-    '''
-        Basic Infix to Postfix conversion - Without parentheses
-    '''
-    operator_stack = ArrayStack()
-
-    operator = '+-*/'
-
-    result = ''
-
+    postfix = []
+    stack = []
 
     for c in infix:
-
-        if c not in operator:         # If it is not an operator, then it have to be an operand
-            result += c
+        if c.isalpha() or c == '(':
+            postfix.append(c)
+        
+        elif c == ')':
+            while stack[-1] != '(':
+                postfix.append(stack.pop())
+            stack.pop()
         
         else:
-            if operator_stack.is_empty():
-                operator_stack.push(c)
+            while stack != [] and \
+            stack[-1] != '(' and \
+            PRIORITY[c] <= PRIORITY[stack[-1]]:
+                postfix.append(stack.pop())
+            
+            stack.append(c)
 
+    while stack != []:
+        postfix.append(stack.pop())
 
-    return result
+    return "".join(postfix)
 
-print(infix_to_postfix_convert('a*b+c'))
+print(infix_to_postfix('a*b+c'))

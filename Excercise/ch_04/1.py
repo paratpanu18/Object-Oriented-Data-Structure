@@ -21,31 +21,28 @@ class App:
     def __init__(self, command: list):
         self.commands_list: list = command
         self.q = Queue()
+        self.answer = []
     
     def perform_operation(self, command: str):
-        signal = command[0]
-        data = command[2::]
+        if command.startswith('E'):
+            _ , data = command.split()
 
-        if signal == 'E':
             self.q.enQueue(data)
-            print(f'Add {data} index is {self.q.size() - 1}')
+            self.answer.append(f'Add {data} index is {self.q.size() - 1}')
         
-        if signal == 'D':
-            if not self.q.isEmpty():
-                print(f'Pop {self.q.deQueue()} size in queue is {self.q.size()}')
-            else:
-                print("-1")
+        if command.startswith('D'):
+            self.answer.append(f'Pop {self.q.deQueue()} size in queue is {self.q.size()}' \
+                               if not self.q.isEmpty() else "-1")
 
     def start(self):
         for command in self.commands_list:
             self.perform_operation(command)
 
-        if self.q.isEmpty():
-            print("Empty")
-        else:
-            print(f'Number in Queue is :  {self.q.items}')
+        self.answer.append("Empty" if self.q.isEmpty() else f'Number in Queue is : {self.q.items}')
+        
+        return "\n".join(self.answer)
     
 raw = [str(cmd) for cmd in input("Enter Input : ").split(',')]
 app = App(raw)
-app.start()
+print(app.start())
 

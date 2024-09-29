@@ -20,34 +20,38 @@ class Queue:
     def head(self):
         return self.items[0]
 
+class Department:
+    def __init__(self, name: str, employees: list = None) -> None:
+        self.department_name: str = name
+        self.employee: list = employees if employees else []
+
+    def add_employee(self, name):
+        self.employee.append(name)
+
 class DepartmentQueue(Queue):
     def __init__(self, department: str, lst: list = None) -> None:
         super().__init__(lst)
         self.department = department
-
 class Canteen:
     def __init__(self, employees) -> None:
         self.queue: Queue = Queue()
-        self.departments: dict = {}
+        self.departments: list = []
 
         for employee in employees:
-            department, name = employee.split()
+            department_name, name = employee.split()
+            department = self.get_department_by_name(department_name)
 
-            if department not in self.departments:
-                self.departments[department] = []
-                self.departments[department].append(name)
-
+            if not department:
+                self.departments.append(Department(department_name, [name]))
             else:
-                self.departments[department].append(name)
-
+                department.add_employee(name)
+    
     def run(self, commands: str) -> None:
         return "\n".join(filter(None, (self.perform_operation(command) for command in commands.split(','))))
         
     def perform_operation(self, command: str) -> str:
-        signal = command[0]
-
-        if signal == 'E':
-            employee = command[2::]
+        if command.startswith('E'):
+            _ , employee = command.split()
             department = self.get_department_of_employee(employee)
 
             '''
@@ -56,14 +60,14 @@ class Canteen:
 
                 However, if department queue already exists, add employee to that department queue
             '''
-            department_queue = self.get_department_queue(department)
+
+            department_queue = self.get_department_queue(department.department_name)
             if not department_queue:
-                self.queue.enQueue(DepartmentQueue(department, [employee]))
-
+                self.queue.enQueue(DepartmentQueue(department.department_name, [employee]))
             else:
-                department_queue.enQueue(employee)  
+                department_queue.enQueue(employee)
 
-        elif signal == 'D':
+        elif command.startswith('D'):
             '''
                 If queue is not empty, dequeue the first employee from the first department queue
                 If department queue is empty, print "Empty
@@ -87,9 +91,15 @@ class Canteen:
                 return queue
         return None
     
+    def get_department_by_name(self, department_name: str) -> Department | None:
+        for department in self.departments:
+            if department.department_name == department_name:
+                return department
+        return None
+    
     def get_department_of_employee(self, employee: str) -> str:
-        for department, employees in self.departments.items():
-            if employee in employees:
+        for department in self.departments:
+            if employee in department.employee:
                 return department
         return None
 
@@ -98,6 +108,3 @@ employees: list = employees.split(',')
 
 app: Canteen = Canteen(employees)
 print(app.run(operations))
-
-
-

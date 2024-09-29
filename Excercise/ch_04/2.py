@@ -31,6 +31,9 @@ class CashierQueue(Queue):
                 self.deQueue()
                 self.timer = 0
 
+    def isFulled(self):
+        return self.size() >= self.max_queue
+
 class QueueManager:
     def __init__(self, str: str, time: int):
         self.main_queue: Queue = Queue([c for c in str])
@@ -44,11 +47,10 @@ class QueueManager:
             self.cashier2_queue.tick()
 
             if not self.main_queue.isEmpty():
-                if self.cashier1_queue.size() < self.cashier1_queue.max_queue:
+                if not self.cashier1_queue.isFulled():
                     self.cashier1_queue.enQueue(self.main_queue.deQueue())
-                elif self.cashier2_queue.size() < self.cashier2_queue.max_queue:
+                elif not self.cashier2_queue.isFulled():
                     self.cashier2_queue.enQueue(self.main_queue.deQueue())
-
         
             print(f"{i + 1} {self.main_queue.getQueue()} {self.cashier1_queue.getQueue()} {self.cashier2_queue.getQueue()}")
 
