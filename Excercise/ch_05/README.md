@@ -1,4 +1,4 @@
-# Chapter : 4 - Queue
+# Chapter : 5 - Linked List
 
 ## item : 1 - Locomotive-(101)
 
